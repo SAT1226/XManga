@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>542</width>
+    <height>488</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>XManga:</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>6</number>
+    </property>
+    <property name="sizeConstraint">
+     <enum>QLayout::SetDefaultConstraint</enum>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="PageView" name="graphicsView">
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>542</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <widget class="QMenu" name="menuRecent">
+     <property name="title">
+      <string>Recent</string>
+     </property>
+     <addaction name="actionClear_Recent"/>
+    </widget>
+    <addaction name="actionOpen"/>
+    <addaction name="menuRecent"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuScale">
+    <property name="title">
+     <string>Scale</string>
+    </property>
+    <addaction name="actionNearest_Neighbor"/>
+    <addaction name="actionBiLinear"/>
+    <addaction name="actionLanczos3"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <widget class="QMenu" name="menuZoom">
+     <property name="title">
+      <string>Zoom</string>
+     </property>
+     <addaction name="actionZoom_In"/>
+     <addaction name="actionZoom_out"/>
+     <addaction name="actionNormal_Size"/>
+    </widget>
+    <addaction name="actionFullScreen"/>
+    <addaction name="actionDouble_Page"/>
+    <addaction name="actionShow_only_one_page_where_appropriate"/>
+    <addaction name="separator"/>
+    <addaction name="actionBest_Fit"/>
+    <addaction name="actionFit_Width"/>
+    <addaction name="actionFit_Height"/>
+    <addaction name="actionManual_Zoom"/>
+    <addaction name="separator"/>
+    <addaction name="actionMagnifyingLens"/>
+    <addaction name="menuZoom"/>
+    <addaction name="separator"/>
+    <addaction name="actionKey_Config"/>
+   </widget>
+   <widget class="QMenu" name="menuNavigation">
+    <property name="title">
+     <string>Navigation</string>
+    </property>
+    <addaction name="actionNext"/>
+    <addaction name="actionPrev"/>
+    <addaction name="actionFirstPage"/>
+    <addaction name="actionLastPage"/>
+    <addaction name="actionNext_One_Page_Only"/>
+    <addaction name="actionPrev_One_Page_Only"/>
+    <addaction name="separator"/>
+    <addaction name="actionNext_Volume"/>
+    <addaction name="actionPrev_Volume"/>
+   </widget>
+   <widget class="QMenu" name="menuBookmark">
+    <property name="title">
+     <string>Bookmark</string>
+    </property>
+    <addaction name="actionAdd_Bookmark"/>
+    <addaction name="actionEdit_Bookmarks"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuView"/>
+   <addaction name="menuScale"/>
+   <addaction name="menuNavigation"/>
+   <addaction name="menuBookmark"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionNearest_Neighbor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Nearest Neighbor</string>
+   </property>
+  </action>
+  <action name="actionBiLinear">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>BiLinear</string>
+   </property>
+  </action>
+  <action name="actionLanczos3">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Lanczos3</string>
+   </property>
+  </action>
+  <action name="actionFullScreen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>FullScreen</string>
+   </property>
+  </action>
+  <action name="actionDouble_Page">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Double Page</string>
+   </property>
+  </action>
+  <action name="actionBest_Fit">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Best Fit</string>
+   </property>
+  </action>
+  <action name="actionFit_Width">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Fit Width</string>
+   </property>
+  </action>
+  <action name="actionFit_Height">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Fit Height</string>
+   </property>
+  </action>
+  <action name="actionManual_Zoom">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Manual Zoom</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionMagnifyingLens">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Magnifying Lens</string>
+   </property>
+  </action>
+  <action name="actionZoom_In">
+   <property name="text">
+    <string>Zoom In</string>
+   </property>
+  </action>
+  <action name="actionZoom_out">
+   <property name="text">
+    <string>Zoom Out</string>
+   </property>
+  </action>
+  <action name="actionNormal_Size">
+   <property name="text">
+    <string>Normal Size</string>
+   </property>
+  </action>
+  <action name="actionNext">
+   <property name="text">
+    <string>Next</string>
+   </property>
+  </action>
+  <action name="actionPrev">
+   <property name="text">
+    <string>Prev</string>
+   </property>
+  </action>
+  <action name="actionFirstPage">
+   <property name="text">
+    <string>FirstPage</string>
+   </property>
+  </action>
+  <action name="actionLastPage">
+   <property name="text">
+    <string>LastPage</string>
+   </property>
+  </action>
+  <action name="actionNext_One_Page_Only">
+   <property name="text">
+    <string>Next One Page Only</string>
+   </property>
+  </action>
+  <action name="actionNext_Volume">
+   <property name="text">
+    <string>Next Volume</string>
+   </property>
+  </action>
+  <action name="actionPrev_Volume">
+   <property name="text">
+    <string>Prev Volume</string>
+   </property>
+  </action>
+  <action name="actionPrev_One_Page_Only">
+   <property name="text">
+    <string>Prev One Page Only</string>
+   </property>
+  </action>
+  <action name="actionKey_Config">
+   <property name="text">
+    <string>Key Config</string>
+   </property>
+  </action>
+  <action name="actionClear_Recent">
+   <property name="text">
+    <string>Clear Recent...</string>
+   </property>
+  </action>
+  <action name="actionAdd_Bookmark">
+   <property name="text">
+    <string>Add Bookmark</string>
+   </property>
+  </action>
+  <action name="actionEdit_Bookmarks">
+   <property name="text">
+    <string>Edit Bookmarks</string>
+   </property>
+  </action>
+  <action name="actionShow_only_one_page_where_appropriate">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Only One Page Where Appropriate</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PageView</class>
+   <extends>QGraphicsView</extends>
+   <header>PageView.hpp</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
