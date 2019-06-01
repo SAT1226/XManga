@@ -144,11 +144,11 @@ private:
   ImageCache imageCache_;
   QList<QString> pathNameList_;
 
-  int index_;
+  QAtomicInt index_;
   QFuture<void> future_;
-  bool thread_;
-  volatile bool setImage_;
-  bool spreadMode_;
+  QAtomicInteger<bool> thread_;
+  QAtomicInteger<bool> setImage_;
+  QAtomicInteger<bool> spreadMode_;
   bool lupeMode_;
   int margin_;
   QGraphicsPixmapItem *lupe_;

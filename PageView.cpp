@@ -333,7 +333,7 @@ void PageView::run()
         pageQueue.pop_front();
 
         if(!imageCache_.checkImage(page)) {
-          auto img = QImage::fromData(archive_.getData(pathNameList_[page]));
+          auto img = QImage::fromData(archive_.getData(pathNameList_.at(page)));
 
 //          if(img.size().width() > 800)
 //            img = img.scaledToWidth(800, Qt::SmoothTransformation);
