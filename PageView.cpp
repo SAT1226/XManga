@@ -462,7 +462,7 @@ bool PageView::open(const QString& fileName, int index = 0)
   setImage_ = true;
   future_ = QtConcurrent::run(this, &PageView::run);
 
-  if(!archive_.Open(fileName)) {
+  if(!archive_.open(fileName)) {
     thread_ = false;
     future_.waitForFinished();
 

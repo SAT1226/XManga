@@ -625,8 +625,7 @@ void XManga::nextArchive()
           QFileInfo file(f.absolutePath(), fileList[j]);
           if(!file.isFile()) continue;
 
-          if(arcTest.Open(file.absoluteFilePath())) {
-            arcTest.Close();
+          if(arcTest.test(file.absoluteFilePath())) {
             if(fileOpen(file.absoluteFilePath())) {
               return;
             }
@@ -653,8 +652,7 @@ void XManga::preArchive()
           QFileInfo file(f.absolutePath(), fileList[j]);
           if(!file.isFile()) continue;
 
-          if(arcTest.Open(file.absoluteFilePath())) {
-            arcTest.Close();
+          if(arcTest.test(file.absoluteFilePath())) {
             if(fileOpen(file.absoluteFilePath())) {
               return;
             }

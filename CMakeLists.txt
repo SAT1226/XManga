@@ -18,6 +18,9 @@ INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(UNARR REQUIRED libunarr)
 MESSAGE(STATUS "unarr: ${UNARR_VERSION}")
 
+FIND_PACKAGE(LibArchive REQUIRED)
+MESSAGE(STATUS "LibArchive: ${LibArchive_VERSION}")
+
 SET(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTOUIC ON)
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -31,6 +34,7 @@ ADD_EXECUTABLE(xmanga
   PageView.cpp
   BookmarkDialog.cpp
   XManga.cpp
+  Archive.cpp
 
   blitz/scalefilter.cpp
   qactionmanager/keyconfigdialog.cpp
@@ -44,6 +48,7 @@ INCLUDE_DIRECTORIES(
   ${Qt5Core_INCLUDE_DIRS}
   ${Qt5Gui_INCLUDE_DIRS}
   ${UNARR_INCLUDE_DIRS}
+  ${LibArchive_INCLUDE_DIRS}
   )
 TARGET_LINK_LIBRARIES(
   xmanga
@@ -51,6 +56,8 @@ TARGET_LINK_LIBRARIES(
   ${Qt5Core_LIBRARIES}
   ${Qt5Gui_LIBRARIES}
   ${UNARR_LIBRARIES}
+  ${UNRAR_LIBRARIES}
+  ${LibArchive_LIBRARIES}
   )
 
 INSTALL(TARGETS xmanga DESTINATION bin)

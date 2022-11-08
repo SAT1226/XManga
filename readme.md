@@ -11,6 +11,7 @@
 ## Dependencies
 * Qt5
 * [unarr](https://github.com/selmf/unarr)
+* [libarchive](https://www.libarchive.org/)
 
 ## Installation
 ```
