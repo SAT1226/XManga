@@ -130,6 +130,8 @@ public:
   void dropEvent(QDropEvent* event);
   void dragMoveEvent(QDragMoveEvent* event);
   void dragLeaveEvent(QDragLeaveEvent* event);
+  void mouseReleaseEvent(QMouseEvent* event);
+  void mousePressEvent(QMouseEvent *event);
 
   bool getAutoOnePage() const;
   void setAutoOnePage(bool autoOnePage);
@@ -162,6 +164,7 @@ private:
   int pindex_;
   bool autoOnePage_;
   int sindex1_, sindex2_;
+  bool drag_;
 
 signals:
   void privateImageChanged(int p1, int p2);

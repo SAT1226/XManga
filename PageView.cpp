@@ -19,7 +19,8 @@ PageView::PageView(QWidget *parent) :
   QGraphicsView(parent), index_(-1), thread_(true), setImage_(true),
   spreadMode_(false), lupeMode_(false), margin_(0), pagePixmapItem_(0),
   scaleAlgorithms_(SCALE_ALGORITHMS::BILINEAR), scaleMode_(SCALE_MODE::BEST_FIT),
-  scaleRatio_(1.0), scrollCnt_(0), onePageOnly_(false), pindex_(-1), sindex1_(0), sindex2_(0)
+  scaleRatio_(1.0), scrollCnt_(0), onePageOnly_(false), pindex_(-1),
+  sindex1_(0), sindex2_(0), drag_(false)
 {
   QGraphicsScene *scene = new QGraphicsScene;
   this -> setScene(scene);
@@ -626,6 +627,10 @@ void PageView::mouseMoveEvent(QMouseEvent *event)
     auto point = mapToScene(event -> pos());
     moveLupeItem(point.x(), point.y());
   }
+
+  if (event->buttons() != 0) {
+    drag_ = true;
+  }
 }
 
 void PageView::scrollX(int x)
@@ -683,6 +688,26 @@ void PageView::wheelEvent(QWheelEvent * event)
   if(degress.y() < 0) {
     if(setImage_) nextPage(true);
   }
+}
+
+void PageView::mouseReleaseEvent(QMouseEvent* event)
+{
+  QGraphicsView::mouseReleaseEvent(event);
+  if(!drag_) {
+    if(event->button() == Qt::LeftButton) {
+      nextPage();
+    }
+    if(event->button() == Qt::RightButton) {
+      prePage();
+    }
+  }
+  drag_ = false;;
+}
+
+void PageView::mousePressEvent(QMouseEvent *event)
+{
+  QGraphicsView::mousePressEvent(event);
+  drag_ = false;
 }
 
 void PageView::keyPressEvent(QKeyEvent *event)
