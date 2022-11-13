@@ -19,7 +19,7 @@ XManga::XManga() : ui_(new Ui::MainWindow),
   connect(pageView_, &PageView::pageOver, this, &XManga::pageOverSlot);
   connect(pageView_, &PageView::scaleModeChanged, this, &XManga::scaleModeChangedSlot);
   connect(pageView_, &PageView::dndFileName, this, [=](const QString &fileName) {
-                                                     fileOpen(fileName);
+                                                     open(fileName);
                                                    });
   pageView_ -> setMargin(0);
 
@@ -27,6 +27,7 @@ XManga::XManga() : ui_(new Ui::MainWindow),
   connectActions();
 
   Settings::Instance().keyActions.addDefaultKey("actionOpen", QKeySequence("Ctrl+O"));
+  Settings::Instance().keyActions.addDefaultKey("actionOpenDirectory", QKeySequence(""));
   Settings::Instance().keyActions.addDefaultKey("actionClearRecent", QKeySequence(""));
   Settings::Instance().keyActions.addDefaultKey("actionQuit", QKeySequence("Q"));
   Settings::Instance().keyActions.addDefaultKey("actionFullScreen", QKeySequence("F"));
@@ -64,6 +65,7 @@ XManga::XManga() : ui_(new Ui::MainWindow),
   Settings::Instance().keyActions.registAction("actionQuit", ui_ -> actionQuit, "File");
   Settings::Instance().keyActions.registAction("actionClearRecent", ui_ -> actionClear_Recent, "File");
   Settings::Instance().keyActions.registAction("actionOpen", ui_ -> actionOpen, "File");
+  Settings::Instance().keyActions.registAction("actionOpenDirectory", ui_ -> actionOpenDirectory, "File");
   Settings::Instance().keyActions.registAction("actionKey_Config", ui_ -> actionKey_Config, "View");
   Settings::Instance().keyActions.registAction("actionNormal_Size", ui_ -> actionNormal_Size, "View");
   Settings::Instance().keyActions.registAction("actionZoom_out", ui_ -> actionZoom_out, "View");
@@ -150,10 +152,10 @@ XManga::~XManga()
   Settings::Instance().Save();
 }
 
-bool XManga::fileOpen(const QString &fileName, int index)
+bool XManga::open(const QString &arcName, int index, const QString &fileName)
 {
-  if(pageView_ -> open(fileName, index)) {
-    fileName_ = fileName;
+  if(pageView_ -> open(arcName, index, fileName)) {
+    fileName_ = arcName;
     pathNameList_.clear();
 
     pathNameList_ = pageView_ -> getPathNameList();
@@ -168,8 +170,8 @@ bool XManga::fileOpen(const QString &fileName, int index)
     setWindowTitle("XManga: " + archiveFileName.fileName());
   }
   else {
-    qDebug() << "FileOpen Error: " << fileName;
-    QMessageBox::critical(this, "", "FileOpen Error: " + fileName);
+    qDebug() << "FileOpen Error: " << arcName;
+    QMessageBox::critical(this, "", "FileOpen Error: " + arcName);
 
     fileName_ = "";
     setWindowTitle("XManga:");
@@ -289,7 +291,7 @@ void XManga::updateBookmarkMenu()
     auto fileName = name.mid(n + 1, -1);
 
     menuPreProcess();
-    fileOpen(fileName, index);
+    open(fileName, index);
   };
 
   ui_ -> menuBookmark -> clear();
@@ -308,7 +310,7 @@ void XManga::updateRecentMenu()
   ui_ -> menuRecent -> clear();
   auto func = [=](QString name) {
     menuPreProcess();
-    fileOpen(name);
+    open(name);
   };
 
   auto it = Settings::Instance().recent.constEnd();
@@ -330,10 +332,30 @@ void XManga::connectActions()
     QFileInfo f(fileName_);
 
     auto fileName = QFileDialog::getOpenFileName(
-        this, "", f.absolutePath(), "Archive (*.zip *.rar *.cbz *.cbr)");
+        this, "", f.absolutePath(), "Archive (*.zip *.rar *.cbz *.cbr);;Image (*.bmp *.jpg *.jpeg *.png)");
 
     if(!fileName.isEmpty()) {
-      fileOpen(fileName);
+      if (fileName.endsWith(".jpg", Qt::CaseInsensitive) ||
+          fileName.endsWith(".jpeg", Qt::CaseInsensitive) ||
+          fileName.endsWith(".png", Qt::CaseInsensitive) ||
+          fileName.endsWith(".bmp", Qt::CaseInsensitive)) {
+
+        f = QFileInfo(fileName);
+        f.absolutePath();
+        open(f.absolutePath(), 0, f.fileName());
+      }
+      else open(fileName);
+    }
+  });
+  connect(ui_ -> actionOpenDirectory, &QAction::triggered, [=] {
+    menuPreProcess();
+    QFileInfo f(fileName_);
+
+    auto dirName = QFileDialog::getExistingDirectory(
+        this, "", f.absolutePath());
+
+    if(!dirName.isEmpty()) {
+      open(dirName);
     }
   });
   connect(ui_ -> actionClear_Recent, &QAction::triggered, [=] {
@@ -616,17 +638,16 @@ void XManga::nextArchive()
 
   QFileInfo f(fileName_);
   auto fileList = getFileNames(f.absolutePath());
-  Archive arcTest;
 
   for(int i = 0; i < fileList.size(); ++i) {
     if(fileList[i] == f.fileName()) {
       for(int j = i + 1; j < fileList.size(); ++j) {
         if(j < fileList.size()) {
           QFileInfo file(f.absolutePath(), fileList[j]);
-          if(!file.isFile()) continue;
 
-          if(arcTest.test(file.absoluteFilePath())) {
-            if(fileOpen(file.absoluteFilePath())) {
+          if(fileList[j] == "." || fileList[j] == "..") continue;
+          if(Archive::test(file.absoluteFilePath())) {
+            if(open(file.absoluteFilePath())) {
               return;
             }
           }
@@ -643,17 +664,16 @@ void XManga::preArchive()
 
   QFileInfo f(fileName_);
   auto fileList = getFileNames(f.absolutePath());
-  Archive arcTest;
 
   for(int i = 0; i < fileList.size(); ++i) {
     if(fileList[i] == f.fileName()) {
       for(int j = i - 1; j > 0; --j) {
         if(j >= 0) {
           QFileInfo file(f.absolutePath(), fileList[j]);
-          if(!file.isFile()) continue;
 
-          if(arcTest.test(file.absoluteFilePath())) {
-            if(fileOpen(file.absoluteFilePath())) {
+          if(fileList[j] == "." || fileList[j] == "..") continue;
+          if(Archive::test(file.absoluteFilePath())) {
+            if(open(file.absoluteFilePath())) {
               return;
             }
           }

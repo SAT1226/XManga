@@ -17,7 +17,7 @@ int main(int argc, char** argv)
   QStringList args = QCoreApplication::arguments();
   args.removeAt(0);
   if(args.size() != 0) {
-    win.fileOpen(args[0]);
+    win.open(args[0]);
   }
 
   return app.exec();

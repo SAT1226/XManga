@@ -11,7 +11,7 @@ public:
   virtual ~Archive() {}
 
   bool open(const QString& fileName);
-  bool test(const QString& fileName);
+  static bool test(const QString& fileName);
 
   QList<QString> getPathNameList() {
     return entryNameList_;
@@ -34,6 +34,7 @@ private:
   };
   class UnarrLoader;
   class LibarchiveLoader;
+  class DirectoryLoader;
 
   std::unique_ptr<Loader> loader_;
 };

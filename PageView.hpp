@@ -80,7 +80,7 @@ public:
   void setImage(const QImage& image);
   void wheelEvent(QWheelEvent * event);
   void setPage(int index);
-  bool open(const QString& fileName, int index);
+  bool open(const QString& arcName, int index, const QString& fileName);
   void keyPressEvent(QKeyEvent *event);
   QList<QString> getPathNameList() const;
   void nextPage(bool wheel = false);

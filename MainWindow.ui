@@ -65,6 +65,7 @@
      <addaction name="actionClear_Recent"/>
     </widget>
     <addaction name="actionOpen"/>
+    <addaction name="actionOpenDirectory"/>
     <addaction name="menuRecent"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
@@ -305,6 +306,11 @@
    </property>
    <property name="text">
     <string>Show Only One Page Where Appropriate</string>
+   </property>
+  </action>
+  <action name="actionOpenDirectory">
+   <property name="text">
+    <string>Open Directory</string>
    </property>
   </action>
  </widget>

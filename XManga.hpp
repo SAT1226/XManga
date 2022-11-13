@@ -13,7 +13,7 @@ class XManga : public QMainWindow {
 public:
   XManga();
   virtual ~XManga();
-  bool fileOpen(const QString &fileName, int index = 0);
+  bool open(const QString &arcName, int index = 0, const QString &fileName = "");
   void fullscreen();
   void resizeEvent(QResizeEvent *event);
 

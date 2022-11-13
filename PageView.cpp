@@ -450,7 +450,7 @@ void PageView::setImage(const QImage& image)
   this -> resetImage();
 }
 
-bool PageView::open(const QString& fileName, int index = 0)
+bool PageView::open(const QString& arcName, int index = 0, const QString& fileName = "")
 {
   thread_ = false;
   future_.waitForFinished();
@@ -463,7 +463,7 @@ bool PageView::open(const QString& fileName, int index = 0)
   setImage_ = true;
   future_ = QtConcurrent::run(this, &PageView::run);
 
-  if(!archive_.open(fileName)) {
+  if(!archive_.open(arcName)) {
     thread_ = false;
     future_.waitForFinished();
 
@@ -477,6 +477,15 @@ bool PageView::open(const QString& fileName, int index = 0)
   image_ = QImage();
   resetImage();
   pathNameList_ = archive_.getPathNameList();
+  if(!fileName.isEmpty()) {
+    for(int i = 0; i < pathNameList_.count(); ++i) {
+      if(pathNameList_[i] == fileName) {
+        index = i;
+        break;
+      }
+    }
+  }
+
   scrolledPos_ = START;
   setPage(index);
 
