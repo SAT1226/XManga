@@ -77,6 +77,7 @@
     <addaction name="actionNearest_Neighbor"/>
     <addaction name="actionBiLinear"/>
     <addaction name="actionLanczos3"/>
+    <addaction name="actionAvir"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -311,6 +312,14 @@
   <action name="actionOpenDirectory">
    <property name="text">
     <string>Open Directory</string>
+   </property>
+  </action>
+  <action name="actionAvir">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Avir</string>
    </property>
   </action>
  </widget>

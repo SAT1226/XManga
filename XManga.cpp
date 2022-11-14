@@ -120,6 +120,9 @@ XManga::XManga() : ui_(new Ui::MainWindow),
   case PageView::LANCZOS3:
     ui_ -> actionLanczos3 -> activate(QAction::Trigger);
     break;
+  case PageView::AVIR:
+    ui_ -> actionAvir -> activate(QAction::Trigger);
+    break;
   };
 
   int w, h;
@@ -448,6 +451,7 @@ void XManga::connectActions()
   actions -> addAction(ui_ -> actionNearest_Neighbor);
   actions -> addAction(ui_ -> actionBiLinear);
   actions -> addAction(ui_ -> actionLanczos3);
+  actions -> addAction(ui_ -> actionAvir);
   ui_ -> actionBiLinear -> setChecked(true);
   connect(actions, &QActionGroup::triggered, [=](QAction *action) {
     menuPreProcess();
@@ -463,6 +467,10 @@ void XManga::connectActions()
     if(action == ui_ -> actionLanczos3) {
       pageView_ -> setScaleAlgorithms(PageView::LANCZOS3);
       scaleMode_ = 2;
+    }
+    if(action == ui_ -> actionAvir) {
+      pageView_ -> setScaleAlgorithms(PageView::AVIR);
+      scaleMode_ = 3;
     }
 
     pageView_ -> resetImage();

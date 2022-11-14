@@ -2,7 +2,7 @@
  XManga is simple comic viewer written C++ and Qt.
 
 ## Feature
-* Lanczos3 resize filter (ImageMagick's Lanczos3 implementation)
+* High-quality resize filter (using [AVIR](https://github.com/avaneev/avir))
 * Spread viewing
 * Magnifying Lens
 * Key customize
@@ -12,6 +12,7 @@
 * Qt5
 * [unarr](https://github.com/selmf/unarr)
 * [libarchive](https://www.libarchive.org/)
+* [AVIR](https://github.com/avaneev/avir)
 
 ## Installation
 ```

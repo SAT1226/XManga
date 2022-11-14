@@ -13,7 +13,8 @@
 #include <QMimeData>
 #include <cmath>
 
-#include "./blitz/blitz.h"
+#include "./avir/avir.h"
+#include "./avir/lancir.h"
 
 PageView::PageView(QWidget *parent) :
   QGraphicsView(parent), index_(-1), thread_(true), setImage_(true),
@@ -335,10 +336,6 @@ void PageView::run()
 
         if(!imageCache_.checkImage(page)) {
           auto img = QImage::fromData(archive_.getData(pathNameList_.at(page)));
-
-//          if(img.size().width() > 800)
-//            img = img.scaledToWidth(800, Qt::SmoothTransformation);
-
           imageCache_.setImage(page, img);
         }
       }
@@ -359,7 +356,7 @@ QImage PageView::scaleImage(int w, int h, QImage& img)
     else
       return img.scaled(w, h, Qt::KeepAspectRatio, Qt::FastTransformation);
   }
-  else if (scaleAlgorithms_ == BILINEAR) {
+  else if(scaleAlgorithms_ == BILINEAR) {
     if(h == -1)
       return img.scaledToWidth(w, Qt::SmoothTransformation);
     else if(w == -1)
@@ -381,7 +378,24 @@ QImage PageView::scaleImage(int w, int h, QImage& img)
 
     auto size = QSize(floor(rect.width() * ratio), floor(rect.height() * ratio));
 
-    return Blitz::smoothScaleFilter(img, size, 1.0, Blitz::LanczosFilter);
+    if(img.isNull() || !size.isValid()) return img;
+    img = img.convertToFormat(QImage::Format_ARGB32);
+
+    QImage buffer(size, QImage::Format_ARGB32);
+    if(scaleAlgorithms_ == LANCZOS3) {
+      avir::CLancIR ImageResizer;
+      ImageResizer.resizeImage(img.bits(), rect.width(), rect.height(), 0,
+                               buffer.bits(), size.width(), size.height(), 0, 4);
+
+    }
+    else if(scaleAlgorithms_ == AVIR) {
+      avir::CImageResizer<> ImageResizer(8);
+      ImageResizer.resizeImage(img.bits(), rect.width(), rect.height(), 0,
+                               buffer.bits(), size.width(), size.height(), 4, 0);
+
+    }
+
+    return buffer;
   }
 }
 

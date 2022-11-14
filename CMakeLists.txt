@@ -36,7 +36,6 @@ ADD_EXECUTABLE(xmanga
   XManga.cpp
   Archive.cpp
 
-  blitz/scalefilter.cpp
   qactionmanager/keyconfigdialog.cpp
   qactionmanager/qactionmanager.cpp
   qactionmanager/shortcutbutton.cpp
@@ -56,7 +55,6 @@ TARGET_LINK_LIBRARIES(
   ${Qt5Core_LIBRARIES}
   ${Qt5Gui_LIBRARIES}
   ${UNARR_LIBRARIES}
-  ${UNRAR_LIBRARIES}
   ${LibArchive_LIBRARIES}
   )
 

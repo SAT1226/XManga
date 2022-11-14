@@ -108,6 +108,7 @@ public:
      NEAREST_NEIGHBOR,
      BILINEAR,
      LANCZOS3,
+     AVIR,
   };
   void setScaleAlgorithms(SCALE_ALGORITHMS mode);
   SCALE_ALGORITHMS getScaleAlgorithms() const;
