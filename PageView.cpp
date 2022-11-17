@@ -11,6 +11,7 @@
 #include <QGraphicsProxyWidget>
 #include <QDebug>
 #include <QMimeData>
+#include <QAction>
 #include <cmath>
 
 #include "./avir/avir.h"
@@ -722,6 +723,10 @@ void PageView::mouseReleaseEvent(QMouseEvent* event)
     }
     if(event->button() == Qt::RightButton) {
       prePage();
+    }
+    if(event->button() == Qt::MiddleButton) {
+        auto action = window() -> findChild<QAction*>("actionMagnifyingLens");
+        action -> trigger();
     }
   }
   drag_ = false;;
