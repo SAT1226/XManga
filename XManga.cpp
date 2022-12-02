@@ -1,6 +1,7 @@
 #include "XManga.hpp"
 
 #include "Archive.hpp"
+#include "PageView.hpp"
 #include "Settings.hpp"
 #include "ui_MainWindow.h"
 #include "BookmarkDialog.hpp"
@@ -42,6 +43,7 @@ XManga::XManga() : ui_(new Ui::MainWindow),
   Settings::Instance().keyActions.addDefaultKey("actionZoom_out", QKeySequence("-"));
   Settings::Instance().keyActions.addDefaultKey("actionNormal_Size", QKeySequence("="));
   Settings::Instance().keyActions.addDefaultKey("actionKey_Config", QKeySequence(""));
+  Settings::Instance().keyActions.addDefaultKey("actionThumbnailView", QKeySequence("A"));
   Settings::Instance().keyActions.addDefaultKey("actionNearest_Neighbor", QKeySequence(""));
   Settings::Instance().keyActions.addDefaultKey("actionBiLinear", QKeySequence(""));
   Settings::Instance().keyActions.addDefaultKey("actionLanczos3", QKeySequence(""));
@@ -67,6 +69,7 @@ XManga::XManga() : ui_(new Ui::MainWindow),
   Settings::Instance().keyActions.registAction("actionOpen", ui_ -> actionOpen, "File");
   Settings::Instance().keyActions.registAction("actionOpenDirectory", ui_ -> actionOpenDirectory, "File");
   Settings::Instance().keyActions.registAction("actionKey_Config", ui_ -> actionKey_Config, "View");
+  Settings::Instance().keyActions.registAction("actionThumbnailView", ui_ -> actionThumbnailView, "View");
   Settings::Instance().keyActions.registAction("actionNormal_Size", ui_ -> actionNormal_Size, "View");
   Settings::Instance().keyActions.registAction("actionZoom_out", ui_ -> actionZoom_out, "View");
   Settings::Instance().keyActions.registAction("actionZoom_In", ui_ -> actionZoom_In, "View");
@@ -135,6 +138,9 @@ XManga::XManga() : ui_(new Ui::MainWindow),
   else
     h = Settings::Instance().height;
 
+  ui_ -> thumbnailView -> hide();
+  connect(ui_ -> thumbnailView, &ThumbnailView::activated, this, &XManga::thumbnailViewActivated);
+
   resize(w, h);
   updateRecentMenu();
   updateBookmarkMenu();
@@ -155,9 +161,21 @@ XManga::~XManga()
   Settings::Instance().Save();
 }
 
+void XManga::thumbnailViewActivated(const QModelIndex &index)
+{
+  pageView_ -> setScrolledPos(PageView::START);
+  pageView_ -> setPage(index.row());
+
+  ui_ -> actionThumbnailView -> setChecked(false);
+  ui_ -> thumbnailView -> hide();
+  pageView_ -> show();
+  pageView_ -> setFocus();
+}
+
 bool XManga::open(const QString &arcName, int index, const QString &fileName)
 {
   if(pageView_ -> open(arcName, index, fileName)) {
+    ui_ -> thumbnailView -> open(arcName);
     fileName_ = arcName;
     pathNameList_.clear();
 
@@ -180,6 +198,7 @@ bool XManga::open(const QString &arcName, int index, const QString &fileName)
     setWindowTitle("XManga:");
     pageSlider_ -> setValue(0);
     pageLabel_ -> setText("0/0");
+    ui_ -> thumbnailView -> clear();
 
     return false;
   }
@@ -249,6 +268,7 @@ bool XManga::eventFilter(QObject *obj, QEvent *event)
           menuBar -> setVisible(true);
           pageView_ -> setOffsetY(pageView_ -> getOffset().y() -
                                 (menuBar -> height()));
+          ui_ -> thumbnailView -> setOffsetY(-menuBar -> height());
         }
       }
       if(menuBar -> isVisible()) {
@@ -265,6 +285,7 @@ bool XManga::eventFilter(QObject *obj, QEvent *event)
             ui_ -> menuNavigation -> hide();
             ui_ -> menuBookmark -> hide();
             pageView_ -> resetOffsetY();
+            ui_ -> thumbnailView -> setOffsetY(0);
           }
         }
       }
@@ -445,6 +466,28 @@ void XManga::connectActions()
       resetShortcuts();
     }
   });
+  connect(ui_ -> actionThumbnailView, &QAction::triggered, [=](bool checked) {
+    menuPreProcess();
+    if(checked) {
+      ui_ -> thumbnailView -> show();
+
+      pageView_ -> hide();
+      ui_ -> thumbnailView -> setFocus();
+      auto model = ui_ -> thumbnailView -> model();
+      if(model == nullptr) return;
+
+      QModelIndex index = model -> index(pageView_ -> getIndex(), 0);
+      if(index.isValid()) {
+        ui_ -> thumbnailView -> selectionModel() -> clear();
+        ui_ -> thumbnailView -> setCurrentIndex(index);
+      }
+    }
+    else {
+      ui_ -> thumbnailView -> hide();
+      pageView_ -> show();
+      pageView_ -> setFocus();
+    }
+  });
 
   // Scale
   actions = new QActionGroup(this);
@@ -596,6 +639,7 @@ void XManga::menuPreProcess()
     ui_ -> menubar -> hide();
     layout() -> activate();
     pageView_ -> resetOffsetY();
+    ui_ -> thumbnailView -> setOffsetY(0);
   }
 }
 
@@ -762,4 +806,13 @@ void XManga::initStatusBar(QStatusBar *status)
   pageLabel_ = new QLabel("0/0");
   pageLabel_ -> setMargin(5);
   status -> addWidget(pageLabel_);
+
+  icon = QApplication::style() -> standardIcon(QStyle::SP_FileDialogListView);
+  button = new QPushButton(icon, "");
+  connect(button, &QPushButton::clicked,
+          [&] { ui_ -> actionThumbnailView -> trigger(); });
+  status -> addWidget(button);
+
+  widget = new QWidget();
+  status -> addWidget(widget);
 }

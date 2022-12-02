@@ -35,6 +35,7 @@ ADD_EXECUTABLE(xmanga
   BookmarkDialog.cpp
   XManga.cpp
   Archive.cpp
+  ThumbnailView.cpp
 
   qactionmanager/keyconfigdialog.cpp
   qactionmanager/qactionmanager.cpp

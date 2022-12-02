@@ -12,11 +12,9 @@
 
 static bool isImageFile(const QString &fileName)
 {
-  if (fileName.endsWith(".jpg", Qt::CaseInsensitive) ||
-      fileName.endsWith(".jpeg", Qt::CaseInsensitive) ||
-      fileName.endsWith(".png", Qt::CaseInsensitive) ||
-      fileName.endsWith(".bmp", Qt::CaseInsensitive)) {
-    return true;
+  auto ImageFormats = QImageReader::supportedImageFormats();
+  foreach(const auto& i, ImageFormats) {
+    if(fileName.endsWith("." + i, Qt::CaseInsensitive)) return true;
   }
   return false;
 }
@@ -272,9 +270,7 @@ public:
     if(!open_) return entries;
 
     QDir dir = QDir(directoryPath_);
-    QStringList filters;
-    filters << "*.bmp" << "*.jpg" << "*.jpeg" << "*.png";
-    entries = dir.entryList(filters, QDir::Files);
+    entries = dir.entryList(getImageExts(), QDir::Files);
 
     QCollator sorter;
     sorter.setNumericMode(true);
@@ -304,9 +300,7 @@ public:
 
     QList<QString> entries;
     QDir dir = QDir(fileName);
-    QStringList filters;
-    filters << "*.bmp" << "*.jpg" << "*.jpeg" << "*.png";
-    entries = dir.entryList(filters, QDir::Files);
+    entries = dir.entryList(getImageExts(), QDir::Files);
 
     if(entries.empty()) return false;
     return true;
@@ -314,6 +308,16 @@ public:
 
 
 private:
+  static QStringList getImageExts() {
+    QStringList filters;
+    auto imageFormats = QImageReader::supportedImageFormats();
+    foreach(const auto& i, imageFormats) {
+      filters << "*." + i;
+    }
+
+    return filters;
+  }
+
   bool open_;
   QString directoryPath_;
 };

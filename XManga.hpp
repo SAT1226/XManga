@@ -22,6 +22,7 @@ protected:
 
 private slots:
   void imageChangedSlot(int index);
+  void thumbnailViewActivated(const QModelIndex &index);
 
 private:
   void updateBookmarkMenu();

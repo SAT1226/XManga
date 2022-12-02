@@ -2,6 +2,7 @@
 #define Archive_HPP
 #include <QString>
 #include <QCollator>
+#include <QImageReader>
 
 #include <memory>
 

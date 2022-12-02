@@ -43,6 +43,13 @@
       </property>
      </widget>
     </item>
+    <item>
+     <widget class="ThumbnailView" name="thumbnailView">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -102,6 +109,8 @@
     <addaction name="separator"/>
     <addaction name="actionMagnifyingLens"/>
     <addaction name="menuZoom"/>
+    <addaction name="separator"/>
+    <addaction name="actionThumbnailView"/>
     <addaction name="separator"/>
     <addaction name="actionKey_Config"/>
    </widget>
@@ -322,12 +331,25 @@
     <string>Avir</string>
    </property>
   </action>
+  <action name="actionThumbnailView">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>ThumbnailView</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>PageView</class>
    <extends>QGraphicsView</extends>
    <header>PageView.hpp</header>
+  </customwidget>
+  <customwidget>
+   <class>ThumbnailView</class>
+   <extends>QListView</extends>
+   <header>ThumbnailView.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>
