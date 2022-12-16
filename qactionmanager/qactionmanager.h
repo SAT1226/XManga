@@ -53,7 +53,10 @@ public:
     {
         m_actionByName = rhs;
     }
-
+    void copyNameByGroups(QMultiMap<QString, QString>& rhs)
+    {
+        m_nameByGroup = rhs;
+    }
     void addDefaultKey(QString name, Key key)
     {
         m_keyByNameDefaults[name] = key;

@@ -36,6 +36,7 @@ ADD_EXECUTABLE(xmanga
   XManga.cpp
   Archive.cpp
   ThumbnailView.cpp
+  MouseGestureConfigDialog.cpp
 
   qactionmanager/keyconfigdialog.cpp
   qactionmanager/qactionmanager.cpp

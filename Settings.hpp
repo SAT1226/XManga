@@ -1,13 +1,25 @@
 #ifndef SETTINGS_HPP
 #define SETTINGS_HPP
 
+#include <QVector>
+
 #include "Singleton.hpp"
 #include "qactionmanager/keyconfigdialog.h"
+
+struct MouseGesture {
+  QString pattern;
+  QString actionName;
+};
 
 class Settings : public Singleton<Settings> {
   friend Singleton<Settings>;
 public:
   QActionManager<QKeySequence, QKeySequence, QAction*> keyActions;
+
+  typedef QActionManager<QKeySequence, QString, QAction*> gestureActionManager;
+  gestureActionManager gestureActions;
+  QVector<MouseGesture> mouseGestures;
+
   bool spread;
   int scaleAlgorithms;
   int width, height;
@@ -34,6 +46,17 @@ public:
     width           = settings_ -> value("Width", -1).toInt();
     height          = settings_ -> value("Height", -1).toInt();
     autoOnePage     = settings_ -> value("AutoOnePage", false).toBool();
+
+    int size = settings_ -> beginReadArray("MouseGestures");
+    for(int i = 0; i < size; ++i) {
+      settings_ -> setArrayIndex(i);
+
+      MouseGesture gesture;
+      gesture.pattern = settings_ -> value("Pattern", "").toString();
+      gesture.actionName = settings_ -> value("Action", "").toString();
+      mouseGestures.push_back(gesture);
+    }
+    settings_ -> endArray();
   }
 
   void Save() {
@@ -42,6 +65,19 @@ public:
         settings_ -> setValue(action, keyActions.keyMaps()[action].toString());
     }
     settings_ -> endGroup();
+
+    settings_ -> beginGroup("MouseGesture");
+    settings_ -> remove("");
+    settings_ -> endGroup();
+
+    settings_ -> beginWriteArray("MouseGestures");
+    for(int i = 0; i < mouseGestures.size(); ++i) {
+      settings_ -> setArrayIndex(i);
+      settings_ -> setValue("Pattern", mouseGestures[i].pattern);
+      settings_ -> setValue("Action", mouseGestures[i].actionName);
+    }
+    settings_ -> endArray();
+
     settings_ -> setValue("Spread", spread);
     settings_ -> setValue("ScaleAlgorithms", scaleAlgorithms);
     settings_ -> setValue("Recent", recent);

@@ -5,6 +5,7 @@
 #include "Settings.hpp"
 #include "ui_MainWindow.h"
 #include "BookmarkDialog.hpp"
+#include "MouseGestureConfigDialog.hpp"
 
 XManga::XManga() : ui_(new Ui::MainWindow),
                    fullScreen_(false), scaleMode_(1)
@@ -43,10 +44,12 @@ XManga::XManga() : ui_(new Ui::MainWindow),
   Settings::Instance().keyActions.addDefaultKey("actionZoom_out", QKeySequence("-"));
   Settings::Instance().keyActions.addDefaultKey("actionNormal_Size", QKeySequence("="));
   Settings::Instance().keyActions.addDefaultKey("actionKey_Config", QKeySequence(""));
+  Settings::Instance().keyActions.addDefaultKey("actionMouseGesture_Config", QKeySequence(""));
   Settings::Instance().keyActions.addDefaultKey("actionThumbnailView", QKeySequence("A"));
   Settings::Instance().keyActions.addDefaultKey("actionNearest_Neighbor", QKeySequence(""));
   Settings::Instance().keyActions.addDefaultKey("actionBiLinear", QKeySequence(""));
   Settings::Instance().keyActions.addDefaultKey("actionLanczos3", QKeySequence(""));
+  Settings::Instance().keyActions.addDefaultKey("actionAvir", QKeySequence(""));
   Settings::Instance().keyActions.addDefaultKey("actionNext", QKeySequence("PgDown, N"));
   Settings::Instance().keyActions.addDefaultKey("actionPrev", QKeySequence("PgUp, P"));
   Settings::Instance().keyActions.addDefaultKey("actionFirstPage", QKeySequence("Home"));
@@ -69,6 +72,7 @@ XManga::XManga() : ui_(new Ui::MainWindow),
   Settings::Instance().keyActions.registAction("actionOpen", ui_ -> actionOpen, "File");
   Settings::Instance().keyActions.registAction("actionOpenDirectory", ui_ -> actionOpenDirectory, "File");
   Settings::Instance().keyActions.registAction("actionKey_Config", ui_ -> actionKey_Config, "View");
+  Settings::Instance().keyActions.registAction("actionMouseGesture_Config", ui_ -> actionMouseGesture_Config, "View");
   Settings::Instance().keyActions.registAction("actionThumbnailView", ui_ -> actionThumbnailView, "View");
   Settings::Instance().keyActions.registAction("actionNormal_Size", ui_ -> actionNormal_Size, "View");
   Settings::Instance().keyActions.registAction("actionZoom_out", ui_ -> actionZoom_out, "View");
@@ -82,6 +86,7 @@ XManga::XManga() : ui_(new Ui::MainWindow),
   Settings::Instance().keyActions.registAction("actionDouble_Page", ui_ -> actionDouble_Page, "View");
   Settings::Instance().keyActions.registAction("actionFullScreen", ui_ -> actionFullScreen, "View");
   Settings::Instance().keyActions.registAction("actionLanczos3", ui_ -> actionLanczos3, "Scale");
+  Settings::Instance().keyActions.registAction("actionAvir", ui_ -> actionAvir, "Scale");
   Settings::Instance().keyActions.registAction("actionBiLinear", ui_ -> actionBiLinear, "Scale");
   Settings::Instance().keyActions.registAction("actionNearest_Neighbor", ui_ -> actionNearest_Neighbor, "Scale");
   Settings::Instance().keyActions.registAction("actionPrev_Volume", ui_ -> actionPrev_Volume, "Navigation");
@@ -100,6 +105,9 @@ XManga::XManga() : ui_(new Ui::MainWindow),
   Settings::Instance().keyActions.registAction("actionImage_ScrollX_Plus", actionImage_ScrollX_Plus_, "Image");
   Settings::Instance().keyActions.registAction("actionEdit_Bookmarks", ui_ -> actionEdit_Bookmarks, "Bookmark");
   Settings::Instance().keyActions.registAction("actionAdd_Bookmark", ui_ -> actionAdd_Bookmark, "Bookmark");
+
+  Settings::Instance().gestureActions.copyActions(Settings::Instance().keyActions.actions());
+  Settings::Instance().gestureActions.copyNameByGroups(Settings::Instance().keyActions.nameByGroups());
 
   Settings::Instance().Load();
   pageView_ -> setSpread(Settings::Instance().spread);
@@ -235,6 +243,58 @@ void XManga::resizeEvent(QResizeEvent *event)
 
 bool XManga::eventFilter(QObject *obj, QEvent *event)
 {
+  (void)obj;
+  static QPoint mouseGestureStartPos;
+  static QString mouseGesture;
+
+  if(event -> type() == QEvent::MouseMove) {
+    if(QApplication::mouseButtons() == Qt::RightButton) {
+      QMouseEvent *e = static_cast<QMouseEvent *>(event);
+
+      if(mouseGestureStartPos.isNull()) mouseGestureStartPos = e -> globalPos();
+
+      QLineF line(mouseGestureStartPos, e -> globalPos());
+      if(line.length() > 20) {
+        auto angle = line.angle();
+        if(angle > 315 || angle < 45) {
+          if(mouseGesture.isEmpty() || mouseGesture.back() != 'R')
+            mouseGesture.push_back('R');
+        }
+        if(angle > 45 && angle < 135) {
+          if(mouseGesture.isEmpty() || mouseGesture.back() != 'U')
+            mouseGesture.push_back('U');
+        }
+        if(angle > 135 && angle < 225) {
+          if(mouseGesture.isEmpty() || mouseGesture.back() != 'L')
+            mouseGesture.push_back('L');
+        }
+        if(angle > 225 && angle < 315) {
+          if(mouseGesture.isEmpty() || mouseGesture.back() != 'D')
+            mouseGesture.push_back('D');
+        }
+
+        mouseGestureStartPos = QPoint();
+      }
+    }
+  }
+
+  if(event -> type() == QEvent::MouseButtonRelease) {
+      mouseGestureStartPos = QPoint();
+      if(!mouseGesture.isEmpty()) {
+        for(auto gesture: Settings::Instance().mouseGestures) {
+          if(mouseGesture == gesture.pattern) {
+            mouseGesture.clear();
+
+            auto actions = Settings::Instance().gestureActions.actions();
+            actions[gesture.actionName] -> activate(QAction::Trigger);
+            break;
+          }
+        }
+
+        mouseGesture.clear();
+      }
+  }
+
   if(fullScreen_) {
     if(event -> type() == QEvent::MouseMove) {
       QMouseEvent *e = static_cast<QMouseEvent *>(event);
@@ -486,6 +546,15 @@ void XManga::connectActions()
       ui_ -> thumbnailView -> hide();
       pageView_ -> show();
       pageView_ -> setFocus();
+    }
+  });
+  connect(ui_ -> actionMouseGesture_Config, &QAction::triggered, [=] {
+    menuPreProcess();
+    MouseGestureConfigDialog dialog(Settings::Instance().gestureActions,
+                                    Settings::Instance().mouseGestures,
+                                    this);
+    if(dialog.exec() == QDialog::Accepted) {
+      Settings::Instance().mouseGestures = dialog.getGestures();
     }
   });
 

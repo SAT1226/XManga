@@ -112,6 +112,7 @@
     <addaction name="separator"/>
     <addaction name="actionThumbnailView"/>
     <addaction name="separator"/>
+    <addaction name="actionMouseGesture_Config"/>
     <addaction name="actionKey_Config"/>
    </widget>
    <widget class="QMenu" name="menuNavigation">
@@ -337,6 +338,11 @@
    </property>
    <property name="text">
     <string>ThumbnailView</string>
+   </property>
+  </action>
+  <action name="actionMouseGesture_Config">
+   <property name="text">
+    <string>MouseGesture Config</string>
    </property>
   </action>
  </widget>
