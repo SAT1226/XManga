@@ -676,6 +676,31 @@ void XManga::connectActions()
       pageView_ -> scrollX(-40);
     }
   });
+
+  // Tools
+  actions = new QActionGroup(this);
+  actions -> addAction(ui_ -> actionRotate_90_degrees_CW);
+  actions -> addAction(ui_ -> actionRotate_90_degrees_CCW);
+  actions -> addAction(ui_ -> actionRotate_180_degrees);
+  actions -> setExclusionPolicy(QActionGroup::ExclusionPolicy::ExclusiveOptional);
+  connect(actions, &QActionGroup::triggered, [=](QAction *action) {
+    menuPreProcess();
+    std::function<QImage(int, QImage)> func = [](int rotate, const QImage& img) {
+      return(img.transformed(QTransform().rotate(rotate)));
+    };
+
+    int rotate = 0;
+    if(action == ui_ -> actionRotate_90_degrees_CW) rotate = 90;
+    else if(action == ui_ -> actionRotate_90_degrees_CCW) rotate = -90;
+    else if(action == ui_ -> actionRotate_180_degrees) rotate = 180;
+
+    if(action -> isChecked()) {
+      pageView_ -> setFilterFunc(PageView::FILTER::ROTATE,
+                                 std::bind(func, rotate, std::placeholders::_1));
+    }
+    else pageView_ -> clearFilterFunc(PageView::FILTER::ROTATE);
+    pageView_ -> refreshImage();
+  });
 }
 
 void XManga::addActions()

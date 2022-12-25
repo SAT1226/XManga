@@ -136,11 +136,20 @@
     <addaction name="actionAdd_Bookmark"/>
     <addaction name="actionEdit_Bookmarks"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionRotate_90_degrees_CW"/>
+    <addaction name="actionRotate_90_degrees_CCW"/>
+    <addaction name="actionRotate_180_degrees"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
    <addaction name="menuScale"/>
    <addaction name="menuNavigation"/>
    <addaction name="menuBookmark"/>
+   <addaction name="menuTools"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen">
@@ -343,6 +352,30 @@
   <action name="actionMouseGesture_Config">
    <property name="text">
     <string>MouseGesture Config</string>
+   </property>
+  </action>
+  <action name="actionRotate_90_degrees_CW">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Rotate 90 degrees CW</string>
+   </property>
+  </action>
+  <action name="actionRotate_90_degrees_CCW">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Rotate 90 degrees CCW</string>
+   </property>
+  </action>
+  <action name="actionRotate_180_degrees">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Rotate 180 degrees</string>
    </property>
   </action>
  </widget>

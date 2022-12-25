@@ -6,6 +6,7 @@
 #include <QFuture>
 #include <QMutex>
 #include <iostream>
+#include <functional>
 
 #include "Archive.hpp"
 
@@ -137,6 +138,13 @@ public:
   bool getAutoOnePage() const;
   void setAutoOnePage(bool autoOnePage);
 
+  enum FILTER {
+    ROTATE,
+    FILTER_END,
+  };
+  void setFilterFunc(FILTER filter, std::function<QImage(const QImage&)> filterFunc);
+  void clearFilterFunc(FILTER filter);
+
 private:
   void moveLupeItem(int x, int y);
   void run();
@@ -166,6 +174,7 @@ private:
   bool autoOnePage_;
   int sindex1_, sindex2_;
   bool drag_;
+  std::function<QImage(const QImage&)> filterFunc_[FILTER_END];
 
 signals:
   void privateImageChanged(int p1, int p2);

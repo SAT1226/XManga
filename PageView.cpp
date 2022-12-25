@@ -43,6 +43,16 @@ PageView::~PageView()
   future_.waitForFinished();
 }
 
+void PageView::setFilterFunc(FILTER filter, std::function<QImage(const QImage&)> filterFunc)
+{
+  filterFunc_[filter] = filterFunc;
+}
+
+void PageView::clearFilterFunc(FILTER filter)
+{
+  filterFunc_[filter] = std::function<QImage(const QImage&)>();
+}
+
 void PageView::dragEnterEvent(QDragEnterEvent *event)
 {
   auto mime = event -> mimeData();
@@ -273,11 +283,22 @@ void PageView::imageChangedSlot(int p1, int p2)
     }
     painter.end();
 
+    for(int i = 0; i < FILTER_END; ++i) {
+      if(filterFunc_[i])
+        destImg = filterFunc_[i](destImg);
+    }
+
     image_ = destImg;
     setImage(destImg);
   }
   else {
     auto img = imageCache_.getImage(p1);
+
+    for(int i = 0; i < FILTER_END; ++i) {
+      if(filterFunc_[i])
+        img = filterFunc_[i](img);
+    }
+
     image_ = img;
     setImage(img);
   }
